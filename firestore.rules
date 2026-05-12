@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- 3. Primitive Definition ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // --- 4. Drafting the "Fortress" Rules ---
+
+    match /apps/{appId} {
+      // 8. Secure List Queries (Evaluation order follows guidelines)
+      // Anyone can read the apps list/documents
+      allow get, list: if true;
+      
+      // 2. Action-Based Update Pattern (Admin only for this app)
+      allow create: if isAdmin() && isValidApp(incoming()) && isValidId(appId);
+      allow update: if isAdmin() && isValidApp(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasAny(['name', 'tag', 'category', 'icon', 'url', 'description'])
+      );
+      allow delete: if isAdmin();
+
+      function isValidApp(data) {
+        return data.keys().hasAll(['id', 'name', 'tag', 'category']) &&
+               data.id is number &&
+               data.name is string && data.name.size() <= 200 &&
+               data.tag in ['FREE', 'PAID', 'TRIAL'] &&
+               data.category is string && data.category.size() <= 100 &&
+               (data.get('icon', '') is string && data.get('icon', '').size() <= 1000) &&
+               (data.get('url', '') is string && data.get('url', '').size() <= 1000) &&
+               (data.get('description', '') is string && data.get('description', '').size() <= 5000);
+      }
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create, update: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming());
+      allow delete: if false;
+
+      function isValidUser(data) {
+        return data.keys().hasAll(['uid', 'email']) &&
+               data.uid == request.auth.uid &&
+               data.email is string && data.email.size() <= 320;
+      }
+    }
+
+    match /admins/{adminId} {
+      allow get: if isSignedIn();
+      allow list: if isAdmin();
+      allow write: if false;
+    }
+  }
+}

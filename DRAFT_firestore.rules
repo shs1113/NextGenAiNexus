@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // --- Collections ---
+
+    match /apps/{appId} {
+      allow read: if true; // Public read access for the store
+      allow write: if isAdmin();
+      
+      function isValidApp(data) {
+        return data.id is number &&
+               data.name is string && data.name.size() <= 200 &&
+               data.tag in ['FREE', 'PAID', 'TRIAL'] &&
+               data.category is string && data.category.size() <= 100 &&
+               (data.get('icon', '') is string) &&
+               (data.get('url', '') is string) &&
+               (data.get('description', '') is string);
+      }
+    }
+
+    // Users and Admins
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Only manageable via Firebase Console or special script
+    }
+  }
+}

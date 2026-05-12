@@ -1,0 +1,25 @@
+{
+  "entities": {
+    "AppData": {
+      "title": "Application Data",
+      "description": "Information about an application in the store",
+      "type": "object",
+      "properties": {
+        "id": { "type": "number" },
+        "name": { "type": "string" },
+        "tag": { "type": "string", "enum": ["FREE", "PAID", "TRIAL"] },
+        "category": { "type": "string" },
+        "icon": { "type": "string" },
+        "url": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "name", "tag", "category"]
+    }
+  },
+  "firestore": {
+    "/apps/{appId}": {
+      "schema": "AppData",
+      "description": "Collection of applications"
+    }
+  }
+}
