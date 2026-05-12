@@ -1,0 +1,500 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { useState, useMemo } from 'react';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import CategoryNav from './components/CategoryNav';
+import AppCard, { AppData } from './components/AppCard';
+import Footer from './components/Footer';
+import { AnimatePresence, motion } from 'motion/react';
+
+const toolNames = [
+  "Video\nGenerator", "Video\nEditor", "Image\nGenerator", "Image\nEditor", 
+  "Text To\nSpeech", "Content\nWriter", "TTPX", 
+  "IELTS", "App Builder", 
+  "NextGen\nPlay Group", "NextGen Play\nGroup Math", "SEO Content\nOptimizer", 
+  "Image\nGenerator Turbo", "YouTube\nThumbnail Creator", "Logo Designer", 
+  "TikTok Channel\nManager", "Slide Deck", "Kids Phycology\nBehavior Manager", 
+  "Lesson Planner\nFro Every Class", "Web & Android\nTheme Designer", 
+  "Kamasutra", "Sex Life", "Your Family\nYour Companion", "Jinni Bot", 
+  "Kids Math", "Plagiarism Remover\nChecker & AI Humanizer", 
+  "Logo Banner\nPoster Designer", "City Explorer Pakistan\nMap Gps Full Guide", 
+  "Image & Vide\nForensic Scanner", "Math Physics\nComplex Solver", 
+  "Video\nGenerator Turbo", "Mind Map\nMarker", "Learn deep\nlearning NLP computer", 
+  "Learning Ai", "Dive into Deep\nLearning D2L", "Mathematics For\nMachine Learning", 
+  "Android Basics\nin Kotlin Google", "Busy Coder's Guide\nAndroid Development", 
+  "Poem audio\nLyrics", "AI Powered\nPersonal Admin", "Gig Structure\nMaker",
+  "Research\nAssistant", "AI Power\nHouse Combo", "YouTube\nChannel Manager"
+];
+
+const toolIcons = [
+  "https://i.ibb.co/Swhh2mvQ/projector-9639321.png",
+  "https://i.ibb.co/G3xz3Nct/video-editing-8417163.png",
+  "https://i.ibb.co/fYBZqNsL/photo-camera-1115027.png",
+  "https://i.ibb.co/Sj0R9QT/chat-14359872.png",
+  "https://i.ibb.co/k6cS3hj6/laptop-2064028.png",
+  "https://i.ibb.co/hJ17tmPW/pptx-730630.png",
+  "https://i.ibb.co/20MFFrBD/space-research-16999039.png",
+  "https://i.ibb.co/kVwT91zT/efficient-5138744.png",
+  "https://i.ibb.co/JW663dD2/play-13843134.png",
+  "https://i.ibb.co/N60LZxnb/report-16877186.png",
+  "https://i.ibb.co/21tkv9Tx/mobile-game-6261230.png",
+  "https://i.ibb.co/Y7c7Lt0T/abacus-3810145.png",
+  "https://i.ibb.co/gLvfCt3t/search-engine-optimization-2645768.png",
+  "https://i.ibb.co/7dqmP7vc/website-11502312.png",
+  "https://i.ibb.co/Y4jwLdx6/image-5978052.png",
+  "https://i.ibb.co/VYywNjfb/editing-4661061.png",
+  "https://i.ibb.co/TBGc31qB/analytics-576562.png",
+  "https://i.ibb.co/FkQgPmgk/sad-18204678.png",
+  "https://i.ibb.co/1t5Gm7q6/stationery-17762797.png",
+  "https://i.ibb.co/3mJn2s5Q/rgb-sensor-10817679.png",
+  "https://i.ibb.co/FLbK1s53/aditi-6026362.png",
+  "https://i.ibb.co/RTfYmp1M/gender-18767683.png",
+  "https://i.ibb.co/YBdsgqnx/box-12800605.png",
+  "https://i.ibb.co/m5smjp4R/botnet-7464208.png",
+  "https://i.ibb.co/20kQ4CRf/numbers-11758935.png",
+  "https://i.ibb.co/v6cpXKJ1/artificial-intelligence-10857051.png",
+  "https://i.ibb.co/DPtTRn9v/ice-cream-shop-3268426.png",
+  "https://i.ibb.co/vCfhbL8Q/searching-7928736.png",
+  "https://i.ibb.co/1JfPPk7s/eye-scan-561734.png",
+  "https://i.ibb.co/RGtPPc9x/mathematics-12696078.png",
+  "https://i.ibb.co/TBjV45VW/video-4414436.png",
+  "https://i.ibb.co/G4XCnZfg/goal-12820632.png",
+  "https://i.ibb.co/dJ0jR1wr/software-10852995.png",
+  "https://i.ibb.co/jknKrVcz/education-17917550.png",
+  "https://i.ibb.co/XkGphjPy/cryptography-1685673.png",
+  "https://i.ibb.co/dw81Yc5f/elearning-4650895.png",
+  "https://i.ibb.co/tpqsBnyM/google-16509540.png",
+  "https://i.ibb.co/wNkqZfBL/android-527564.png",
+  "https://i.ibb.co/RZTPTgx/tablet-461035.png",
+  "https://i.ibb.co/spNkJ7Dd/music-2327412.png",
+  "https://i.ibb.co/mVGtm7s3/gear-11514256.png",
+  "https://i.ibb.co/dwvGtXD0/businessman-609013.png",
+  "https://i.ibb.co/LFWtVqL/tag-15116088.png"
+];
+
+const categories = ["Video", "Design", "Writing", "Education", "Social", "Tech", "Utility", "Kids", "+18"];
+
+const ALL_APPS_DATA: AppData[] = [
+  // FREE LAZY APPS
+  { id: 1, name: "Video Generator", tag: 'FREE', category: "Video", icon: "https://i.ibb.co/Swhh2mvQ/projector-9639321.png", url: "https://opal.google/app/1Wq-VCCWTXp11_5gvc8cenxoy52wKcHmv", description: "" },
+  { id: 2, name: "Video Editor", tag: 'FREE', category: "Video", icon: "https://i.ibb.co/G3xz3Nct/video-editing-8417163.png", url: "https://opal.google/app/1OVAKBhkts-d4GXsZO6kfsc-fdNMd4X-H", description: "" },
+  { id: 3, name: "Image Generator", tag: 'FREE', category: "Design", icon: "https://i.ibb.co/fYBZqNsL/photo-camera-1115027.png", url: "https://opal.google/app/1Lp6mmQpQU1Bxr6BVoleaBROdkhaOER95", description: "" },
+  { id: 4, name: "Image Editor", tag: 'FREE', category: "Design", icon: "https://i.ibb.co/VYywNjfb/editing-4661061.png", url: "https://opal.google/app/1X41-vhazLd9NKRbweQF_QrbjL0Canu4F", description: "" },
+  { id: 5, name: "Text To Speech", tag: 'FREE', category: "Utility", icon: "https://i.ibb.co/Sj0R9QT/chat-14359872.png", url: "https://opal.google/app/1mdEt1L2eTGa-kXgTlwTmsYgVInmqit12n", description: "" },
+  { id: 6, name: "Content Writer", tag: 'FREE', category: "Writing", icon: "https://i.ibb.co/k6cS3hj6/laptop-2064028.png", url: "https://opal.google/app/1PH0w7PIsTgqaqv7sy7D_v19xaH1PKWhx", description: "" },
+  { id: 7, name: "TTPX", tag: 'FREE', category: "Utility", icon: "https://i.ibb.co/hJ17tmPW/pptx-730630.png", url: "https://opal.google/app/1UcxUkN6-YMKI6RzQifeIz4lqvZPK7cap", description: "" },
+  { id: 8, name: "Research Assistant", tag: 'FREE', category: "Utility", icon: "https://i.ibb.co/20MFFrBD/space-research-16999039.png", url: "https://opal.google/app/1PrJasmUrDxHHmvtSG1FBWJoDes_12Pbq", description: "" },
+  { id: 9, name: "AI PowerHouse Combo", tag: 'FREE', category: "Tech", icon: "https://i.ibb.co/kVwT91zT/efficient-5138744.png", url: "https://opal.google/app/1Eg1Rcdvy39QH8LsWT_XNtMZkCbAg9jEH", description: "" },
+  { id: 10, name: "YouTube Channel Manager", tag: 'FREE', category: "Social", icon: "https://i.ibb.co/JW663dD2/play-13843134.png", url: "https://opal.google/app/1UWns8UB43L2e3rnV5GcVXTdLyx0aGCoP", description: "" },
+  { id: 11, name: "IELTS", tag: 'FREE', category: "Education", icon: "https://i.ibb.co/N60LZxnb/report-16877186.png", url: "https://opal.google/app/1XQJ4Xh7chDd6wQirEb2-fJMAlrHALSVT", description: "" },
+  { id: 12, name: "App Builder", tag: 'FREE', category: "Tech", icon: "https://i.ibb.co/21tkv9Tx/mobile-game-6261230.png", url: "https://opal.google/app/1giBvX_ZwvRWnKllrI5YwwJkGOT0XsooA", description: "" },
+  { id: 13, name: "NextGen Play Group", tag: 'FREE', category: "Kids", icon: "https://i.ibb.co/Y7c7Lt0T/abacus-3810145.png", url: "https://nextgen-playgroup-gen.base44.app", description: "" },
+  { id: 14, name: "NextGen Play Group Math", tag: 'FREE', category: "Kids", icon: "https://i.ibb.co/RGtPPc9x/mathematics-12696078.png", url: "https://nextgen-math-pals-play.base44.app", description: "" },
+  
+  // PAID SMART APPS
+  { id: 101, name: "SEO Content Optimizer", tag: 'PAID', category: "Writing", icon: "https://i.ibb.co/gLvfCt3t/search-engine-optimization-2645768.png", url: "https://nextgenainexus-seo-pulse.base44.app", description: "" },
+  { id: 102, name: "Image Generator Turbo", tag: 'PAID', category: "Design", icon: "https://i.ibb.co/Y4jwLdx6/image-5978052.png", url: "https://nocturnal-nexus-vision-flow.base44.app", description: "" },
+  { id: 103, name: "YouTube Thumbnail Creator", tag: 'PAID', category: "Social", icon: "https://i.ibb.co/TBGc31qB/analytics-576562.png", url: "https://nextgen-ai-nexus-snap-nexus-flow.base44.app", description: "" },
+  { id: 104, name: "Logo Designer", tag: 'PAID', category: "Design", icon: "https://i.ibb.co/3mJn2s5Q/rgb-sensor-10817679.png", url: "https://nextgen-nexus-ai.base44.app", description: "" },
+  { id: 105, name: "TikTok Channel Manager", tag: 'PAID', category: "Social", icon: "https://i.ibb.co/JW663dD2/play-13843134.png", url: "https://nexus-ai-tik-tok-manager-c0f4f351.base44.app", description: "" },
+  { id: 106, name: "Slide Deck", tag: 'PAID', category: "Utility", icon: "https://i.ibb.co/hJ17tmPW/pptx-730630.png", url: "https://nextgen-ai-slide-skinny-craft-ai.base44.app", description: "" },
+  { id: 107, name: "Kids Psychology And Behavior Manager", tag: 'PAID', category: "Kids", icon: "https://i.ibb.co/FkQgPmgk/sad-18204678.png", url: "https://nextgen-ai-kind-mind-guide.base44.app", description: "" },
+  { id: 108, name: "Lesson Planner Montessori To High School", tag: 'PAID', category: "Education", icon: "https://i.ibb.co/1t5Gm7q6/stationery-17762797.png", url: "https://nextgen-ai-teach-sociable-craft-flow.base44.app", description: "" },
+  { id: 109, name: "Web And Android Mobile Theme Designer", tag: 'PAID', category: "Design", icon: "https://i.ibb.co/dJ0jR1wr/software-10852995.png", url: "https://nextgen-ai-color-design-flow.base44.app", description: "" },
+  { id: 110, name: "Kamasutra", tag: 'PAID', category: "+18", icon: "https://i.ibb.co/FLbK1s53/aditi-6026362.png", url: "https://nextgen--intimacy-flow.base44.app", description: "" },
+  { id: 111, name: "Sex Life", tag: 'PAID', category: "+18", icon: "https://i.ibb.co/RTfYmp1M/gender-18767683.png", url: "https://nextgen-sexlife-intimacy-guide.base44.app", description: "" },
+  
+  // TRIAL SMART APPS
+  { id: 201, name: "Your Family Your Companion", tag: 'TRIAL', category: "Social", icon: "https://i.ibb.co/dwvGtXD0/businessman-609013.png", url: "https://ai.studio/apps/aa51bf2e-a531-4602-9477-953963309fb4?fullscreenApplet=true", description: "" },
+  { id: 202, name: "Jinni Bot", tag: 'TRIAL', category: "Tech", icon: "https://i.ibb.co/m5smjp4R/botnet-7464208.png", url: "https://aistudio.google.com/apps/d7a35432-84cb-48ab-8088-30ff70967e52?fullscreenApplet=true&showPreview=true", description: "" },
+  { id: 203, name: "Math & Problem Solver", tag: 'TRIAL', category: "Education", icon: "https://i.ibb.co/20kQ4CRf/numbers-11758935.png", url: "https://aistudio.google.com/apps/5c3f7bfc-bf58-44eb-8001-a54cb88519ba?fullscreenApplet=true", description: "" },
+  { id: 204, name: "Plagiarism Remover Checker & AI Humanizer", tag: 'TRIAL', category: "Writing", icon: "https://i.ibb.co/v6cpXKJ1/artificial-intelligence-10857051.png", url: "https://ai.studio/apps/390c0330-3511-45a4-bfee-4cb5a20190bc?fullscreenApplet=true", description: "" },
+  { id: 205, name: "Logo Banner Poster Designer", tag: 'TRIAL', category: "Design", icon: "https://i.ibb.co/YBdsgqnx/box-12800605.png", url: "https://ai.studio/apps/390c0330-3511-45a4-bfee-4cb5a20190bc?fullscreenApplet=true", description: "" },
+  { id: 206, name: "City Explorer Pakistan Map GPS Full Guide", tag: 'TRIAL', category: "Utility", icon: "https://i.ibb.co/vCfhbL8Q/searching-7928736.png", url: "https://ai.studio/apps/a0d42ee1-bde5-44ce-8d24-48d67eb02aaa?fullscreenApplet=true", description: "" },
+  { id: 207, name: "Image & Video Forensic Scanner", tag: 'TRIAL', category: "Tech", icon: "https://i.ibb.co/1JfPPk7s/eye-scan-561734.png", url: "https://ai.studio/apps/896e891e-1ea5-43af-8248-f0c4e1256362?fullscreenApplet=true", description: "" },
+  { id: 208, name: "Math Physics & Complex Solver", tag: 'TRIAL', category: "Education", icon: "https://i.ibb.co/RGtPPc9x/mathematics-12696078.png", url: "https://aistudio.google.com/apps/5c3f7bfc-bf58-44eb-8001-a54cb88519ba?fullscreenApplet=true", description: "" },
+  { id: 209, name: "Video Generator Turbo", tag: 'TRIAL', category: "Video", icon: "https://i.ibb.co/TBjV45VW/video-4414436.png", url: "https://ai.studio/apps/e37fa71c-1738-407a-a46f-9e2a3e3ecfc6?fullscreenApplet=true", description: "" },
+  { id: 210, name: "Mind Map Marker", tag: 'TRIAL', category: "Design", icon: "https://i.ibb.co/G4XCnZfg/goal-12820632.png", url: "https://ai.studio/apps/0a041a17-4cd4-4d22-9f43-0cb706cf36d8?fullscreenApplet=true", description: "" },
+  { id: 211, name: "Learn Deep Learning NLP Computer", tag: 'TRIAL', category: "Tech", icon: "https://i.ibb.co/XkGphjPy/cryptography-1685673.png", url: "https://gainful-nexus-brain-flow.base44.app", description: "" },
+  { id: 212, name: "Learning AI", tag: 'TRIAL', category: "Tech", icon: "https://i.ibb.co/dw81Yc5f/elearning-4650895.png", url: "https://nextgennexus-hallowed-ai-flow.base44.app", description: "" },
+  { id: 213, name: "Dive Into Deep Learning D2L", tag: 'TRIAL', category: "Education", icon: "https://i.ibb.co/tpqsBnyM/google-16509540.png", url: "https://nextgennexus-deep-learn.base44.app", description: "" },
+  { id: 214, name: "Mathematics For Machine Learning", tag: 'TRIAL', category: "Education", icon: "https://i.ibb.co/20kQ4CRf/numbers-11758935.png", url: "https://nextgen-spiritual-nexus-ai-flow.base44.app", description: "" },
+  { id: 215, name: "Android Basics In Kotlin Google", tag: 'TRIAL', category: "Tech", icon: "https://i.ibb.co/wNkqZfBL/android-527564.png", url: "https://nextgen-spectacular-intellecta-learn-flow.base44.app", description: "" },
+  { id: 216, name: "The Busy Coder's Guide To Android Development", tag: 'TRIAL', category: "Tech", icon: "https://i.ibb.co/RZTPTgx/tablet-461035.png", url: "https://nextgen-hungry-nexus-ai-vault.base44.app", description: "" },
+  { id: 217, name: "Poem App Audio And Lyrics", tag: 'TRIAL', category: "Writing", icon: "https://i.ibb.co/spNkJ7Dd/music-2327412.png", url: "https://ai.studio/apps/d26ff6ce-638f-4616-86fc-067935a24093?fullscreenApplet=true", description: "" },
+  { id: 218, name: "AI Powered Personal Admin", tag: 'TRIAL', category: "Utility", icon: "https://i.ibb.co/mVGtm7s3/gear-11514256.png", url: "https://ai.studio/apps/e4825d18-a842-4f34-9c2d-9989f1aafe38?fullscreenApplet=true", description: "" },
+  { id: 219, name: "Gig Structure Maker", tag: 'TRIAL', category: "Utility", icon: "https://i.ibb.co/LFWtVqL/tag-15116088.png", url: "https://ai.studio/apps/e23ba277-a31c-4378-8480-07a19c5f24b5?fullscreenApplet=true", description: "" },
+];
+
+export default function App() {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeAppType, setActiveAppType] = useState("All");
+
+  const filterApps = (apps: AppData[]) => {
+    return apps.filter(app => {
+      const categoryMatch = activeCategory === "All" || app.category === activeCategory;
+      const typeMatch = activeAppType === "All" || app.tag === activeAppType;
+      return categoryMatch && typeMatch;
+    });
+  };
+
+  const freeApps = useMemo(() => filterApps(ALL_APPS_DATA.filter(a => a.tag === 'FREE')), [activeCategory, activeAppType]);
+  const trialApps = useMemo(() => filterApps(ALL_APPS_DATA.filter(a => a.tag === 'TRIAL')), [activeCategory, activeAppType]);
+  const paidApps = useMemo(() => filterApps(ALL_APPS_DATA.filter(a => a.tag === 'PAID')), [activeCategory, activeAppType]);
+
+  const clearFilters = () => {
+    setActiveCategory("All");
+    setActiveAppType("All");
+  };
+
+  const hasAnyApps = freeApps.length > 0 || trialApps.length > 0 || paidApps.length > 0;
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-[#1a1a1a] pb-20">
+      <Header />
+      
+      <main className="flex-grow">
+        <Hero />
+        
+        <CategoryNav 
+          activeCategory={activeCategory} 
+          setActiveCategory={setActiveCategory} 
+        />
+
+        <div className="app-type-buttons px-6">
+          <button 
+            className={`app-type-btn free-btn ${activeAppType === 'FREE' ? 'ring-4 ring-white ring-offset-2 ring-offset-[#1a1a1a]' : 'opacity-80 hover:opacity-100'}`}
+            onClick={() => setActiveAppType(activeAppType === 'FREE' ? 'All' : 'FREE')}
+          >
+            FREE LAZY APPS
+          </button>
+          <button 
+            className={`app-type-btn trial-btn ${activeAppType === 'TRIAL' ? 'ring-4 ring-white ring-offset-2 ring-offset-[#1a1a1a]' : 'opacity-80 hover:opacity-100'}`}
+            onClick={() => setActiveAppType(activeAppType === 'TRIAL' ? 'All' : 'TRIAL')}
+          >
+            TRIAL SMART APPS
+          </button>
+          <button 
+            className={`app-type-btn paid-btn ${activeAppType === 'PAID' ? 'ring-4 ring-white ring-offset-2 ring-offset-[#1a1a1a]' : 'opacity-80 hover:opacity-100'}`}
+            onClick={() => setActiveAppType(activeAppType === 'PAID' ? 'All' : 'PAID')}
+          >
+            PAID SMART APPS
+          </button>
+        </div>
+
+        <section className="apps-section px-6 pb-32 max-w-[1400px] mx-auto">
+          {freeApps.length > 0 && (
+            <div className="mb-20">
+              <div className="apps-section-title free-title">FREE LAZY APPS</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-x-8 gap-y-12">
+                <AnimatePresence mode="popLayout">
+                  {freeApps.map((app) => (
+                    <motion.div
+                      key={app.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex justify-center"
+                    >
+                      <AppCard app={app} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
+
+          {paidApps.length > 0 && (
+            <div className="mb-20">
+              <div className="apps-section-title paid-title">PAID SMART APPS</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-x-8 gap-y-12">
+                <AnimatePresence mode="popLayout">
+                  {paidApps.map((app) => (
+                    <motion.div
+                      key={app.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex justify-center"
+                    >
+                      <AppCard app={app} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
+
+          {trialApps.length > 0 && (
+            <div className="mb-20">
+              <div className="apps-section-title trial-title">TRIAL SMART APPS</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-x-8 gap-y-12">
+                <AnimatePresence mode="popLayout">
+                  {trialApps.map((app) => (
+                    <motion.div
+                      key={app.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex justify-center"
+                    >
+                      <AppCard app={app} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
+          
+          {!hasAnyApps && (
+            <div className="text-center py-24 bg-[#222] rounded-[20px] border-2 border-dashed border-[#444] w-full">
+              <p className="text-gray-500 text-sm font-bold">NO APPS FOUND WITH THESE FILTERS.</p>
+              <button 
+                onClick={clearFilters}
+                className="mt-4 text-mustard font-bold hover:underline uppercase text-xs"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Outfit:wght@400;500;600;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  
+  --color-mustard: #e68a17;
+  --color-mustard-dark: #cc7a14;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-[#eeeeee] bg-[#1a1a1a];
+  }
+}
+
+@layer components {
+  .nextgen-title {
+    font-size: 92px;
+    font-weight: 900;
+    line-height: 0.95;
+    color: #111;
+    margin-bottom: 12px;
+    letter-spacing: -2px;
+    display: block;
+  }
+
+  .future-title {
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: 10px;
+    line-height: 1;
+    margin-bottom: 18px;
+    color: #111;
+    text-transform: uppercase;
+    display: block;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 40px;
+    text-align: left;
+    max-width: 800px;
+  }
+
+  .hero-tagline {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.5;
+    max-width: 520px;
+    color: #222;
+  }
+
+  .hero-section {
+    background: #e68a17;
+    padding-top: 40px;
+    padding-bottom: 35px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .apps-section {
+    background: #1a1a1a;
+    padding-top: 30px;
+  }
+
+  .category-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  .category-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .horizontal-slider {
+    width: 360px;
+    height: 189px;
+    border-radius: 26px;
+    overflow: hidden;
+    background: #111;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .horizontal-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .left-slider-pos {
+    transform: none;
+  }
+
+  .right-slider-pos {
+    transform: none;
+  }
+
+  .vertical-slider {
+    width: 208px;
+    height: 360px;
+    border-radius: 26px;
+    overflow: hidden;
+    background: #111;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .vertical-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .top-header,
+  .header-title,
+  .nav-title {
+    display: block;
+  }
+
+  .header-title {
+    color: #e68a17; /* Mustard to match theme but visible on dark bg */
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .app-type-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 30px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  .app-type-btn {
+    min-width: 240px;
+    height: 60px;
+    border: none;
+    border-radius: 18px;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    color: #ffffff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .app-type-btn:active {
+    transform: scale(0.98);
+  }
+
+  .free-btn {
+    background: #7b1fa2;
+  }
+
+  .trial-btn {
+    background: #d81b60;
+  }
+
+  .paid-btn {
+    background: #14a3b8;
+  }
+
+  .apps-section-title {
+    font-size: 28px;
+    font-weight: 900;
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .free-title {
+    color: #7b1fa2;
+  }
+
+  .trial-title {
+    color: #d81b60;
+  }
+
+  .paid-title {
+    color: #14a3b8;
+  }
+
+}
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
