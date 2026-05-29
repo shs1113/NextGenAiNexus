@@ -1,6 +1,8 @@
 {
-  "name": "NextGen AI Nexus",
-  "description": "The nexus for artificial intelligence innovations, featuring a curated store of AI applications and tools.",
+  "name": "NextGen AI Nexus Futuristic",
+  "description": "An AI app store featuring cutting-edge artificial intelligence applications with free, pro, and premium tiers.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

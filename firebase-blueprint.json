@@ -1,25 +1,63 @@
 {
   "entities": {
-    "AppData": {
-      "title": "Application Data",
-      "description": "Information about an application in the store",
+    "App": {
+      "title": "AI Application",
+      "description": "Details of an AI application listed on the store.",
       "type": "object",
       "properties": {
-        "id": { "type": "number" },
-        "name": { "type": "string" },
-        "tag": { "type": "string", "enum": ["FREE", "PAID", "TRIAL"] },
-        "category": { "type": "string" },
-        "icon": { "type": "string" },
-        "url": { "type": "string" },
-        "description": { "type": "string" }
+        "name": { "type": "string", "description": "Name of the AI app" },
+        "description": { "type": "string", "description": "Short description of what the app does" },
+        "longDescription": { "type": "string", "description": "Full description of the app" },
+        "category": { "type": "string", "description": "Category (e.g., Productivity, Creative, Logic)" },
+        "priceTier": { "type": "string", "enum": ["free", "pro", "paid"], "description": "Pricing tier" },
+        "price": { "type": "number", "description": "Price if paid" },
+        "rating": { "type": "number", "description": "User rating out of 5" },
+        "reviewsCount": { "type": "integer", "description": "Number of reviews" },
+        "iconUrl": { "type": "string", "format": "uri", "description": "URL to the app icon image" },
+        "screenshotUrls": { "type": "array", "items": { "type": "string", "format": "uri" }, "description": "List of screenshot URLs" },
+        "affiliateLink": { "type": "string", "format": "uri", "description": "Link for affiliate program" },
+        "developer": { "type": "string", "description": "Name of the developer or company" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the app was listed" }
       },
-      "required": ["id", "name", "tag", "category"]
+      "required": ["name", "description", "category", "priceTier"]
+    },
+    "PricingPlan": {
+      "title": "Pricing Plan",
+      "description": "Details of a subscription plan.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Plan name (e.g., Starter, Personal, Business)" },
+        "price": { "type": "number", "description": "Monthly price" },
+        "features": { "type": "array", "items": { "type": "string" }, "description": "List of features included" },
+        "recommended": { "type": "boolean", "description": "Whether this plan is recommended" }
+      },
+      "required": ["name", "price", "features"]
+    },
+    "User": {
+      "title": "User Profile",
+      "description": "Information about a user.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "isAffiliate": { "type": "boolean" },
+        "favorites": { "type": "array", "items": { "type": "string" }, "description": "IDs of favorite apps" }
+      }
     }
   },
   "firestore": {
-    "/apps/{appId}": {
-      "schema": "AppData",
-      "description": "Collection of applications"
+    "apps": {
+      "schema": "App",
+      "description": "Collection of all listed AI applications."
+    },
+    "pricingPlans": {
+      "schema": "PricingPlan",
+      "description": "Collection of subscription plans for the store itself or featured deals."
+    },
+    "users": {
+      "schema": "User",
+      "description": "User profiles and preferences."
     }
   }
 }
