@@ -44,6 +44,37 @@
         "isAffiliate": { "type": "boolean" },
         "favorites": { "type": "array", "items": { "type": "string" }, "description": "IDs of favorite apps" }
       }
+    },
+    "Contact": {
+      "title": "Contact Message",
+      "description": "Form submission from contact page.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "sector": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "sector", "message"]
+    },
+    "Payment": {
+      "title": "Payment Transaction",
+      "description": "Logged payment transactions pending verification.",
+      "type": "object",
+      "properties": {
+        "paymentChannel": { "type": "string" },
+        "planId": { "type": "string" },
+        "amount": { "type": "number" },
+        "billingEmail": { "type": "string", "format": "email" },
+        "transactionId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderAccount": { "type": "string" },
+        "receiptFile": { "type": "string" },
+        "status": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paymentChannel", "planId", "amount", "billingEmail", "transactionId", "status"]
     }
   },
   "firestore": {
@@ -58,6 +89,14 @@
     "users": {
       "schema": "User",
       "description": "User profiles and preferences."
+    },
+    "contacts": {
+      "schema": "Contact",
+      "description": "Client feedback and collaboration requests."
+    },
+    "payments": {
+      "schema": "Payment",
+      "description": "Payment transactions submitted by customers for verification."
     }
   }
 }

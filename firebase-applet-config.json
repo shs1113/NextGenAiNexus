@@ -1,10 +1,10 @@
 {
-  "projectId": "aqueous-lamp-c5xj8",
-  "appId": "1:467987463514:web:95d893f48de486a25ec763",
-  "apiKey": "AIzaSyCvlGD5SfTzs41bXZC1RjuMcexs9OTh81w",
-  "authDomain": "aqueous-lamp-c5xj8.firebaseapp.com",
+  "projectId": "ai-studio-applet-webapp-10943",
+  "appId": "1:1056792261224:web:532bac686a6354ff0881dd",
+  "apiKey": "AIzaSyDy40fALqGLTrgyQgLyCvMVBP3oEYRWTQE",
+  "authDomain": "ai-studio-applet-webapp-10943.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-6a3d77e2-8531-40fa-a5ec-5752ed67d309",
-  "storageBucket": "aqueous-lamp-c5xj8.firebasestorage.app",
-  "messagingSenderId": "467987463514",
+  "storageBucket": "ai-studio-applet-webapp-10943.firebasestorage.app",
+  "messagingSenderId": "1056792261224",
   "measurementId": ""
 }
