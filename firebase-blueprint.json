@@ -21,18 +21,6 @@
       },
       "required": ["name", "description", "category", "priceTier"]
     },
-    "PricingPlan": {
-      "title": "Pricing Plan",
-      "description": "Details of a subscription plan.",
-      "type": "object",
-      "properties": {
-        "name": { "type": "string", "description": "Plan name (e.g., Starter, Personal, Business)" },
-        "price": { "type": "number", "description": "Monthly price" },
-        "features": { "type": "array", "items": { "type": "string" }, "description": "List of features included" },
-        "recommended": { "type": "boolean", "description": "Whether this plan is recommended" }
-      },
-      "required": ["name", "price", "features"]
-    },
     "User": {
       "title": "User Profile",
       "description": "Information about a user.",
@@ -57,34 +45,12 @@
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "email", "sector", "message"]
-    },
-    "Payment": {
-      "title": "Payment Transaction",
-      "description": "Logged payment transactions pending verification.",
-      "type": "object",
-      "properties": {
-        "paymentChannel": { "type": "string" },
-        "planId": { "type": "string" },
-        "amount": { "type": "number" },
-        "billingEmail": { "type": "string", "format": "email" },
-        "transactionId": { "type": "string" },
-        "senderName": { "type": "string" },
-        "senderAccount": { "type": "string" },
-        "receiptFile": { "type": "string" },
-        "status": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" }
-      },
-      "required": ["paymentChannel", "planId", "amount", "billingEmail", "transactionId", "status"]
     }
   },
   "firestore": {
     "apps": {
       "schema": "App",
       "description": "Collection of all listed AI applications."
-    },
-    "pricingPlans": {
-      "schema": "PricingPlan",
-      "description": "Collection of subscription plans for the store itself or featured deals."
     },
     "users": {
       "schema": "User",
@@ -93,10 +59,6 @@
     "contacts": {
       "schema": "Contact",
       "description": "Client feedback and collaboration requests."
-    },
-    "payments": {
-      "schema": "Payment",
-      "description": "Payment transactions submitted by customers for verification."
     }
   }
 }
